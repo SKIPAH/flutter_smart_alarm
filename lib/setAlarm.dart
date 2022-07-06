@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'alarms.dart';
+import 'notification.dart';
+import 'home.dart';
 
 class setAlarm extends StatelessWidget {
   final TextEditingController hourController = TextEditingController();
@@ -53,7 +55,7 @@ class setAlarm extends StatelessWidget {
             ],
           ),
           Container(
-            margin: const EdgeInsets.all(100),
+            margin: const EdgeInsets.all(80),
             child: TextButton(
               child: const Text(
                 "Create alarm",
@@ -63,13 +65,25 @@ class setAlarm extends StatelessWidget {
                   primary: Colors.white,
                   backgroundColor: Colors.teal,
                   side: BorderSide(color: Colors.black, width: 2)),
-              onPressed: () {
+              onPressed: () async {
                 int hour;
                 int minutes;
                 hour = int.parse(hourController.text);
                 minutes = int.parse(minuteController.text);
-
                 FlutterAlarmClock.createAlarm(hour, minutes);
+
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AboutDialog(
+                        children: [
+                          Center(
+                            child: Text('Hälytys laitettu $hour $minutes',
+                                style: TextStyle(fontSize: 20)),
+                          )
+                        ],
+                      );
+                    });
               },
             ),
           )

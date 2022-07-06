@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'package:flutter_smart_alarm/alarms.dart';
 import 'package:flutter_smart_alarm/main.dart';
+import 'package:flutter_smart_alarm/setTimer.dart';
 import 'setAlarm.dart';
 import 'alarms.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'notification.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,22 +17,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  PageController pageController = PageController();
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    alarms(),
-  ];
-
-  void onTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    pageController.jumpToPage(index);
-  }
+  late final LocalNotificationService service;
 
   @override
+  void initState() {
+    service = LocalNotificationService();
+    service.initialize();
+    listenToNotification();
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     var now = DateTime.now();
     var formattedTime = DateFormat('HH:mm').format(now);
@@ -43,9 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
           fontFamily: 'Scp',
           fontSize: 18.0,
         ),
-        actions: <Widget>[
-          //IconButton(onPressed: () {}, icon: const Icon(Icons.menu))
-        ],
       ),
       body: Container(
         padding: EdgeInsets.all(10),
@@ -71,14 +65,56 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Padding(padding: EdgeInsets.fromLTRB(350, 450, 50, 0)),
-                    TextButton(
-                      child: const Icon((Icons.alarm), size: 50.0),
+                    Padding(padding: EdgeInsets.fromLTRB(350, 350, 50, 0)),
+                    OutlinedButton(
+                      child: const Icon(
+                        (Icons.alarm),
+                        size: 50.0,
+                      ),
                       style: TextButton.styleFrom(
                         primary: Colors.white,
                         backgroundColor: Colors.teal,
                       ),
                       onPressed: () {
+                        // FlutterAlarmClock.showAlarms();
+                        //     Navigator.push(context,
+                        //    MaterialPageRoute(builder: (context) => alarms()));
+                      },
+                    ),
+                    OutlinedButton(
+                      child: const Icon(
+                        (Icons.notification_add),
+                        size: 50.0,
+                      ),
+                      style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        backgroundColor: Colors.teal,
+                      ),
+                      onPressed: () async {
+                        //await service.showNotification(
+                        //     id: 0, title: 'lol', body: 'loloo');
+                        await service.showNotificationWithPayload(
+                            id: 1,
+                            title: 'OK ',
+                            body: 'Hälytys',
+                            payload: 'Herätys');
+                      },
+                    ),
+                    OutlinedButton(
+                      child: const Icon(
+                        (Icons.timer),
+                        size: 50.0,
+                      ),
+                      style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        backgroundColor: Colors.teal,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => setTimer()));
+
                         // FlutterAlarmClock.showAlarms();
                         //Navigator.push(context,
                         // MaterialPageRoute(builder: (context) => alarms()));
@@ -87,18 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ]),
             ]),
       ),
-
-      /*  bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.alarm_add), label: 'Alarms'),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.grey,
-          onTap: onTapped),
-          */
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add_alert),
         onPressed: () {
@@ -108,21 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
-    /*
-              *** SHOW ALARMS SET ON PHONE ***
-              Container(
-                margin: const EdgeInsets.all(25),
-                child: TextButton(
-                  child: const Text(
-                    'Show alarms',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  onPressed: () {
-                    FlutterAlarmClock.showAlarms();
-                  },
-                ),
-              ),
-              */
     /*
 
               *** CREATE TIMER ***
@@ -141,6 +150,22 @@ class _HomeScreenState extends State<HomeScreen> {
               )
               )
               ]
+            
               */
+  }
+
+  void listenToNotification() =>
+      service.onNotificationClick.stream.listen(onNotificationListener);
+
+  void onNotificationListener(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      print('payload $payload');
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => alarms(
+                    payload: payload,
+                  )));
+    }
   }
 }
