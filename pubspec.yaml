@@ -40,6 +40,8 @@ dependencies:
   flutter_local_notifications: ^9.6.1
   timezone: ^0.8.0
   rxdart: ^0.27.4
+  audioplayers: ^1.0.1
+  android_alarm_manager_plus: ^2.0.6
   
 
 dev_dependencies:

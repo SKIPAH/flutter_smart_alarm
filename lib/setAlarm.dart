@@ -7,12 +7,15 @@ import 'home.dart';
 class setAlarm extends StatelessWidget {
   final TextEditingController hourController = TextEditingController();
   final TextEditingController minuteController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     theme:
     ThemeData.dark();
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+        ),
         body: Center(
             child: Column(children: <Widget>[
           SizedBox(height: 200),
@@ -54,38 +57,57 @@ class setAlarm extends StatelessWidget {
               ),
             ],
           ),
-          Container(
-            margin: const EdgeInsets.all(80),
-            child: TextButton(
-              child: const Text(
-                "Create alarm",
-                style: TextStyle(fontSize: 20.0, fontFamily: 'Scp'),
-              ),
-              style: TextButton.styleFrom(
-                  primary: Colors.white,
-                  backgroundColor: Colors.teal,
-                  side: BorderSide(color: Colors.black, width: 2)),
-              onPressed: () async {
-                int hour;
-                int minutes;
-                hour = int.parse(hourController.text);
-                minutes = int.parse(minuteController.text);
-                FlutterAlarmClock.createAlarm(hour, minutes);
+          Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.all(50),
+                child: TextButton(
+                  child: const Text(
+                    "Create alarm",
+                    style: TextStyle(fontSize: 20.0, fontFamily: 'Scp'),
+                  ),
+                  style: TextButton.styleFrom(
+                      primary: Colors.white,
+                      backgroundColor: Colors.teal,
+                      side: BorderSide(color: Colors.black, width: 2)),
+                  onPressed: () {
+                    int hour;
+                    int minutes;
+                    hour = int.parse(hourController.text);
+                    minutes = int.parse(minuteController.text);
+                    FlutterAlarmClock.createAlarm(hour, minutes);
 
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AboutDialog(
-                        children: [
-                          Center(
-                            child: Text('Hälytys laitettu $hour $minutes',
-                                style: TextStyle(fontSize: 20)),
-                          )
-                        ],
-                      );
-                    });
-              },
-            ),
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AboutDialog(
+                            children: [
+                              Center(
+                                child: Text('Hälytys laitettu $hour $minutes',
+                                    style: TextStyle(fontSize: 20)),
+                              )
+                            ],
+                          );
+                        });
+                  },
+                ),
+              ),
+              TextButton(
+                  child: const Text(
+                    "Etusivulle",
+                    style: TextStyle(fontSize: 20.0, fontFamily: 'Scp'),
+                  ),
+                  style: TextButton.styleFrom(
+                      primary: Colors.white,
+                      backgroundColor: Colors.teal,
+                      side: BorderSide(color: Colors.black, width: 2)),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: ((context) => HomeScreen(
+                            hour: hourController.text,
+                            minute: minuteController.text))));
+                  })
+            ],
           )
         ])));
   }

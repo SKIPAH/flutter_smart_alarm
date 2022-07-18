@@ -1,3 +1,4 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'package:flutter_smart_alarm/alarms.dart';
@@ -10,7 +11,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'notification.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  String hour, minute;
+  HomeScreen({Key? key, required this.hour, required this.minute})
+      : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final LocalNotificationService service;
+  bool isOn = false;
+  int alarmId = 1;
 
   @override
   void initState() {
@@ -42,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.only(left: 10),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,30 +66,41 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 50.0,
                 ),
               ),
-              Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${widget.hour}', style: TextStyle(fontSize: 20)),
+                  Padding(padding: EdgeInsets.only(left: 10)),
+                  Text(
+                    '${widget.minute}',
+                    style: TextStyle(fontSize: 20.0),
+                  )
+                ],
+              ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Padding(padding: EdgeInsets.fromLTRB(350, 350, 50, 0)),
+                    Padding(padding: EdgeInsets.only(top: 500)),
                     OutlinedButton(
+                      //  child: const Text("alarms"),
                       child: const Icon(
                         (Icons.alarm),
-                        size: 50.0,
+                        size: 60.0,
                       ),
                       style: TextButton.styleFrom(
                         primary: Colors.white,
                         backgroundColor: Colors.teal,
                       ),
                       onPressed: () {
-                        // FlutterAlarmClock.showAlarms();
-                        //     Navigator.push(context,
-                        //    MaterialPageRoute(builder: (context) => alarms()));
+                        FlutterAlarmClock.showAlarms();
                       },
                     ),
                     OutlinedButton(
+                      // child: const Text('häly testi'),
                       child: const Icon(
                         (Icons.notification_add),
-                        size: 50.0,
+                        size: 60.0,
                       ),
                       style: TextButton.styleFrom(
                         primary: Colors.white,
@@ -95,15 +111,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         //     id: 0, title: 'lol', body: 'loloo');
                         await service.showNotificationWithPayload(
                             id: 1,
-                            title: 'OK ',
-                            body: 'Hälytys',
+                            title: 'HERÄTYS ',
+                            body: '',
                             payload: 'Herätys');
                       },
                     ),
                     OutlinedButton(
+                      // child: const Text('timeri'),
                       child: const Icon(
                         (Icons.timer),
-                        size: 50.0,
+                        size: 60.0,
                       ),
                       style: TextButton.styleFrom(
                         primary: Colors.white,
@@ -114,10 +131,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => setTimer()));
-
-                        // FlutterAlarmClock.showAlarms();
-                        //Navigator.push(context,
-                        // MaterialPageRoute(builder: (context) => alarms()));
+                      },
+                    ),
+                    OutlinedButton(
+                      //  child: const Text('alarmmanagertest'),
+                      child: const Icon(
+                        (Icons.looks_5),
+                        size: 60.0,
+                      ),
+                      style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        backgroundColor: Colors.teal,
+                      ),
+                      onPressed: () async {
+                        AndroidAlarmManager.oneShot(
+                          alarmClock: true,
+                          allowWhileIdle: true,
+                          wakeup: true,
+                          exact: true,
+                          Duration(seconds: 5),
+                          alarmId,
+                          fireAlarm,
+                        );
                       },
                     ),
                   ]),
@@ -131,27 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
-
-    /*
-
-              *** CREATE TIMER ***
-              Container(
-                margin: const EdgeInsets.all(25),
-                child: TextButton(
-                  child: const Text(
-                    'Create timer for 42 seconds',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  onPressed: () {
-                    FlutterAlarmClock.createTimer(42);
-                  },
-                ),
-              ),
-              )
-              )
-              ]
-            
-              */
   }
 
   void listenToNotification() =>
@@ -167,5 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     payload: payload,
                   )));
     }
+  }
+
+  static void fireAlarm() {
+    print('Alarm Fired at');
   }
 }

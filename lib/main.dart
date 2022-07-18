@@ -1,12 +1,18 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_smart_alarm/setAlarm.dart';
 import 'alarms.dart';
 import 'home.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'notification.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AndroidAlarmManager.initialize();
   runApp(MyApp());
 }
 
@@ -16,7 +22,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: HomeScreen(
+        minute: '',
+        hour: '',
+      ),
     );
   }
 }

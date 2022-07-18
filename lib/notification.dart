@@ -17,7 +17,7 @@ class LocalNotificationService {
   Future<void> initialize() async {
     tz.initializeTimeZones();
     const AndroidInitializationSettings androidInitializationsettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_stat_access_alarm');
 
     IOSInitializationSettings iosInitializationSettings =
         IOSInitializationSettings(
@@ -44,6 +44,8 @@ class LocalNotificationService {
             importance: Importance.max,
             priority: Priority.max,
             playSound: true,
+            autoCancel: false,
+            enableVibration: true,
             sound: RawResourceAndroidNotificationSound(
               'pullup',
             ));

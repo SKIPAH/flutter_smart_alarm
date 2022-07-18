@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'home.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class alarms extends StatelessWidget {
   const alarms({
@@ -14,22 +15,79 @@ class alarms extends StatelessWidget {
     theme:
     ThemeData.dark();
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+        ),
         body: Center(
-          child: Column(
+          child: Stack(
             children: <Widget>[
               Container(
-                margin: const EdgeInsets.all(100),
+                margin: const EdgeInsets.all(0),
                 child: SimpleDialog(
-                  title: const Text('lolol'),
+                  contentPadding: EdgeInsets.only(left: 100),
+                  title: const Text(
+                    '2+2?',
+                    style: TextStyle(fontSize: 30.0),
+                  ),
                   children: <Widget>[
                     SimpleDialogOption(
-                      onPressed: () {},
-                      child: const Text('Option 1'),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => alarms(
+                                      payload: payload,
+                                    )));
+                      },
+                      child: const Text(
+                        '5',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
                     ),
                     SimpleDialogOption(
-                      onPressed: () {},
-                      child: const Text('Option 2'),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen(
+                                      minute: '',
+                                      hour: '',
+                                    )));
+                      },
+                      child: const Text(
+                        '4',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ),
+                    SimpleDialogOption(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => alarms(
+                                      payload: payload,
+                                    )));
+                      },
+                      child: const Text(
+                        '6',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      padding: EdgeInsets.all(0),
+                    ),
+                    SimpleDialogOption(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => alarms(
+                                      payload: payload,
+                                    )));
+                      },
+                      child: const Text(
+                        '5',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      padding: EdgeInsets.all(50),
                     ),
                   ],
                 ),
