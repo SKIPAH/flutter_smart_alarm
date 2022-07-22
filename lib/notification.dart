@@ -1,12 +1,9 @@
-import 'dart:math';
+// ignore_for_file: avoid_print
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'home.dart';
-import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:rxdart/subjects.dart';
-import 'setAlarm.dart';
 
 class LocalNotificationService {
   LocalNotificationService();
@@ -40,12 +37,15 @@ class LocalNotificationService {
   Future<NotificationDetails> _notificationDetails() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('channel_id 1', 'channel_name',
-            channelDescription: 'desricption',
+            channelDescription: 'description',
             importance: Importance.max,
             priority: Priority.max,
             playSound: true,
             autoCancel: false,
             enableVibration: true,
+            enableLights: true,
+            largeIcon:
+                DrawableResourceAndroidBitmap('@drawable/ic_stat_access_alarm'),
             sound: RawResourceAndroidNotificationSound(
               'pullup',
             ));
@@ -59,21 +59,11 @@ class LocalNotificationService {
     );
   }
 
-  Future<void> showNotification({
-    required int id,
-    required String title,
-    required String body,
-  }) async {
-    final details = await _notificationDetails();
-    await _localNotificationService.show(id, title, body, details);
-  }
-
   Future<void> showScheduledNotification({
     required int id,
-    required String title,
-    required String body,
-    required int hours,
-    required int minutes,
+    String? title,
+    String? body,
+    required DateTime when,
     required String payload,
   }) async {
     final details = await _notificationDetails();
@@ -81,11 +71,9 @@ class LocalNotificationService {
       id,
       title,
       body,
-      tz.TZDateTime.from(
-        DateTime.now().add(Duration(hours: hours, minutes: minutes)),
-        tz.local,
-      ),
+      tz.TZDateTime.from(when, tz.local),
       details,
+      payload: payload,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
@@ -114,62 +102,12 @@ class LocalNotificationService {
       onNotificationClick.add(payload);
     }
   }
-}
 
+  Future<void> cancelNotification() async {
+    await _localNotificationService.cancel(0);
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-final _notifications = FlutterLocalNotificationsPlugin();
-void sendNotification({String? title, String? body}) async {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  const InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
-
-  await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-  );
-
-  const AndroidNotificationChannel channel =
-      AndroidNotificationChannel('lol', 'lolol');
-
-  flutterLocalNotificationsPlugin.show(
-      0,
-      title,
-      body,
-      NotificationDetails(
-          android: AndroidNotificationDetails(channel.id, channel.name)));
-
-  void scheduleAlarm() async {
-    var scheduledNotificationDateTime =
-        DateTime.now().add(Duration(seconds: 10));
-
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'alarm_notif', 'alarm_notif',
-        icon: '@mipmap/ic_launcher');
-
-    var platformChannelSpecifics = NotificationDetails();
-    await flutterLocalNotificationsPlugin.schedule(0, 'office', 'good morning',
-        scheduledNotificationDateTime, platformChannelSpecifics);
+  Future<void> cancelAllNotification() async {
+    await _localNotificationService.cancelAll();
   }
 }
-*/

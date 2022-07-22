@@ -1,5 +1,5 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'home.dart';
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 
@@ -14,7 +14,7 @@ class setTimer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.all(160),
+            margin: EdgeInsets.only(left: 120, top: 100),
             height: 40,
             width: 80,
             decoration: BoxDecoration(
@@ -31,8 +31,7 @@ class setTimer extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(0),
-            margin: const EdgeInsets.only(left: 0.0, top: 0),
+            margin: const EdgeInsets.only(left: 120, top: 50),
             child: TextButton(
               child: const Text(
                 'Create a timer',
@@ -55,7 +54,7 @@ class setTimer extends StatelessWidget {
                       return AboutDialog(
                         children: [
                           Center(
-                            child: Text('Ajastin asetettu $seconds sekunniksi!',
+                            child: Text('Timer set for $seconds seconds!',
                                 style: TextStyle(fontSize: 20)),
                           )
                         ],

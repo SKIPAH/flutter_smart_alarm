@@ -1,16 +1,17 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
-import 'alarms.dart';
-import 'notification.dart';
 import 'home.dart';
 
 class setAlarm extends StatelessWidget {
   final TextEditingController hourController = TextEditingController();
   final TextEditingController minuteController = TextEditingController();
 
+  int alarmId = 1;
+
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData.dark();
     return Scaffold(
         appBar: AppBar(
@@ -18,12 +19,12 @@ class setAlarm extends StatelessWidget {
         ),
         body: Center(
             child: Column(children: <Widget>[
-          SizedBox(height: 200),
+          const SizedBox(height: 200),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                margin: EdgeInsets.all(0),
+                margin: const EdgeInsets.all(0),
                 height: 40,
                 width: 60,
                 decoration: BoxDecoration(
@@ -39,7 +40,7 @@ class setAlarm extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Container(
                 height: 40,
                 width: 60,
@@ -52,7 +53,8 @@ class setAlarm extends StatelessWidget {
                   child: TextField(
                       controller: minuteController,
                       keyboardType: TextInputType.number,
-                      style: TextStyle(color: Colors.black, fontSize: 25.0)),
+                      style:
+                          const TextStyle(color: Colors.black, fontSize: 25.0)),
                 ),
               ),
             ],
@@ -62,15 +64,11 @@ class setAlarm extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.all(50),
                 child: TextButton(
-                  child: const Text(
-                    "Create alarm",
-                    style: TextStyle(fontSize: 20.0, fontFamily: 'Scp'),
-                  ),
                   style: TextButton.styleFrom(
                       primary: Colors.white,
                       backgroundColor: Colors.teal,
-                      side: BorderSide(color: Colors.black, width: 2)),
-                  onPressed: () {
+                      side: const BorderSide(color: Colors.black, width: 2)),
+                  onPressed: () async {
                     int hour;
                     int minutes;
                     hour = int.parse(hourController.text);
@@ -83,30 +81,34 @@ class setAlarm extends StatelessWidget {
                           return AboutDialog(
                             children: [
                               Center(
-                                child: Text('Hälytys laitettu $hour $minutes',
-                                    style: TextStyle(fontSize: 20)),
+                                child: Text('Alarm set for $hour $minutes',
+                                    style: const TextStyle(fontSize: 20)),
                               )
                             ],
                           );
                         });
                   },
+                  child: const Text(
+                    "Create alarm",
+                    style: TextStyle(fontSize: 20.0, fontFamily: 'Scp'),
+                  ),
                 ),
               ),
               TextButton(
-                  child: const Text(
-                    "Etusivulle",
-                    style: TextStyle(fontSize: 20.0, fontFamily: 'Scp'),
-                  ),
                   style: TextButton.styleFrom(
                       primary: Colors.white,
                       backgroundColor: Colors.teal,
-                      side: BorderSide(color: Colors.black, width: 2)),
+                      side: const BorderSide(color: Colors.black, width: 2)),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: ((context) => HomeScreen(
                             hour: hourController.text,
                             minute: minuteController.text))));
-                  })
+                  },
+                  child: const Text(
+                    "Frontpage",
+                    style: TextStyle(fontSize: 20.0, fontFamily: 'Scp'),
+                  ))
             ],
           )
         ])));

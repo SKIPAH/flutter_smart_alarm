@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'home.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
+// ignore: camel_case_types
 class alarms extends StatelessWidget {
   const alarms({
     Key? key,
@@ -12,7 +12,6 @@ class alarms extends StatelessWidget {
   final String payload;
   @override
   Widget build(BuildContext context) {
-    theme:
     ThemeData.dark();
     return Scaffold(
         appBar: AppBar(
@@ -24,7 +23,7 @@ class alarms extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.all(0),
                 child: SimpleDialog(
-                  contentPadding: EdgeInsets.only(left: 100),
+                  contentPadding: const EdgeInsets.only(left: 100),
                   title: const Text(
                     '2+2?',
                     style: TextStyle(fontSize: 30.0),
@@ -61,6 +60,7 @@ class alarms extends StatelessWidget {
                     ),
                     SimpleDialogOption(
                       onPressed: () {
+                        stopAlarm();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -68,11 +68,11 @@ class alarms extends StatelessWidget {
                                       payload: payload,
                                     )));
                       },
+                      padding: const EdgeInsets.all(0),
                       child: const Text(
                         '6',
                         style: TextStyle(fontSize: 20.0),
                       ),
-                      padding: EdgeInsets.all(0),
                     ),
                     SimpleDialogOption(
                       onPressed: () {
@@ -83,21 +83,27 @@ class alarms extends StatelessWidget {
                                       payload: payload,
                                     )));
                       },
+                      padding: const EdgeInsets.all(50),
                       child: const Text(
                         '5',
                         style: TextStyle(fontSize: 20.0),
                       ),
-                      padding: EdgeInsets.all(50),
                     ),
                   ],
                 ),
               ),
               Text(
                 payload,
-                style: TextStyle(fontSize: 20.0),
+                style: const TextStyle(fontSize: 20.0),
               )
             ],
           ),
         ));
+  }
+
+  static void stopAlarm() {
+    // ignore: avoid_print
+    print('Alarm stopped');
+    FlutterRingtonePlayer.stop();
   }
 }

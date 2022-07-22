@@ -1,15 +1,15 @@
+import 'dart:async';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'package:flutter_smart_alarm/alarms.dart';
-import 'package:flutter_smart_alarm/main.dart';
 import 'package:flutter_smart_alarm/setTimer.dart';
-import 'setAlarm.dart';
 import 'alarms.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'notification.dart';
+import 'setAlarm.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
   String hour, minute;
   HomeScreen({Key? key, required this.hour, required this.minute})
@@ -21,8 +21,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final LocalNotificationService service;
-  bool isOn = false;
   int alarmId = 1;
+
+  final TextEditingController hourController = TextEditingController();
+  final TextEditingController minuteController = TextEditingController();
 
   @override
   void initState() {
@@ -34,138 +36,213 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget build(BuildContext context) {
     var now = DateTime.now();
-    var formattedTime = DateFormat('HH:mm').format(now);
     var formattedDate = DateFormat('EEE, d MMM').format(now);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Smart Alarm"),
-        centerTitle: true,
-        titleTextStyle: const TextStyle(
-          fontFamily: 'Scp',
-          fontSize: 18.0,
+        appBar: AppBar(
+          title: const Text("Smart Alarm"),
+          centerTitle: true,
+          titleTextStyle: const TextStyle(
+            fontFamily: 'Scp',
+            fontSize: 18.0,
+          ),
         ),
-      ),
-      body: Container(
-        padding: EdgeInsets.only(left: 10),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                formattedDate,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  fontFamily: 'Scp',
+        body: Container(
+          padding: const EdgeInsets.only(left: 10),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  formattedDate,
+                  style: const TextStyle(
+                    fontSize: 20.0,
+                    fontFamily: 'Scp',
+                  ),
                 ),
-              ),
-              Text(
-                formattedTime,
-                style: const TextStyle(
-                  fontFamily: 'Scp',
-                  fontSize: 50.0,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${widget.hour}', style: TextStyle(fontSize: 20)),
-                  Padding(padding: EdgeInsets.only(left: 10)),
-                  Text(
-                    '${widget.minute}',
-                    style: TextStyle(fontSize: 20.0),
-                  )
-                ],
-              ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Padding(padding: EdgeInsets.only(top: 500)),
+                const ClockWidget(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(widget.hour, style: const TextStyle(fontSize: 20)),
+                    const Padding(padding: EdgeInsets.only(left: 10)),
+                    Text(
+                      widget.minute,
+                      style: const TextStyle(fontSize: 20.0),
+                    ),
                     OutlinedButton(
-                      //  child: const Text("alarms"),
-                      child: const Icon(
-                        (Icons.alarm),
-                        size: 60.0,
-                      ),
-                      style: TextButton.styleFrom(
-                        primary: Colors.white,
-                        backgroundColor: Colors.teal,
-                      ),
+                      child: const Text("stopalarmM"),
                       onPressed: () {
-                        FlutterAlarmClock.showAlarms();
-                      },
-                    ),
-                    OutlinedButton(
-                      // child: const Text('häly testi'),
-                      child: const Icon(
-                        (Icons.notification_add),
-                        size: 60.0,
-                      ),
-                      style: TextButton.styleFrom(
-                        primary: Colors.white,
-                        backgroundColor: Colors.teal,
-                      ),
-                      onPressed: () async {
-                        //await service.showNotification(
-                        //     id: 0, title: 'lol', body: 'loloo');
-                        await service.showNotificationWithPayload(
-                            id: 1,
-                            title: 'HERÄTYS ',
-                            body: '',
-                            payload: 'Herätys');
-                      },
-                    ),
-                    OutlinedButton(
-                      // child: const Text('timeri'),
-                      child: const Icon(
-                        (Icons.timer),
-                        size: 60.0,
-                      ),
-                      style: TextButton.styleFrom(
-                        primary: Colors.white,
-                        backgroundColor: Colors.teal,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => setTimer()));
-                      },
-                    ),
-                    OutlinedButton(
-                      //  child: const Text('alarmmanagertest'),
-                      child: const Icon(
-                        (Icons.looks_5),
-                        size: 60.0,
-                      ),
-                      style: TextButton.styleFrom(
-                        primary: Colors.white,
-                        backgroundColor: Colors.teal,
-                      ),
-                      onPressed: () async {
                         AndroidAlarmManager.oneShot(
                           alarmClock: true,
                           allowWhileIdle: true,
                           wakeup: true,
                           exact: true,
-                          Duration(seconds: 5),
+                          const Duration(seconds: 0),
                           alarmId,
-                          fireAlarm,
+                          stopAlarm,
                         );
                       },
                     ),
-                  ]),
-            ]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add_alert),
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => setAlarm()));
-        },
-      ),
-    );
+                    OutlinedButton(
+                      child: const Text("cancel all alarms"),
+                      onPressed: () {
+                        service.cancelAllNotification();
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      const Padding(padding: EdgeInsets.only(top: 500)),
+                      OutlinedButton(
+                        style: TextButton.styleFrom(
+                          primary: Colors.white,
+                          backgroundColor: Colors.teal,
+                        ),
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => setAlarm()));
+                        },
+                        child: const Icon(
+                          (Icons.android),
+                          size: 60.0,
+                        ),
+                      ),
+                      OutlinedButton(
+                        style: TextButton.styleFrom(
+                          primary: Colors.white,
+                          backgroundColor: Colors.teal,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => setTimer()));
+                        },
+                        child: const Icon(
+                          (Icons.timer),
+                          size: 60.0,
+                        ),
+                      ),
+                      OutlinedButton(
+                        style: TextButton.styleFrom(
+                          primary: Colors.white,
+                          backgroundColor: Colors.teal,
+                        ),
+                        onPressed: () async {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  actions: [
+                                    TextField(
+                                      controller: hourController,
+                                      keyboardType: TextInputType.number,
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 25.0),
+                                    ),
+                                    TextField(
+                                      controller: minuteController,
+                                      keyboardType: TextInputType.number,
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 25.0),
+                                    ),
+                                    TextButton(
+                                        onPressed: () async {
+                                          int hour;
+                                          int minute;
+                                          hour = int.parse(hourController.text);
+                                          minute =
+                                              int.parse(minuteController.text);
+                                          AndroidAlarmManager.oneShotAt(
+                                            DateTime(
+                                              DateTime.now().year,
+                                              DateTime.now().month,
+                                              DateTime.now().day,
+                                              hour,
+                                              minute,
+                                            ),
+                                            alarmClock: true,
+                                            allowWhileIdle: true,
+                                            wakeup: true,
+                                            exact: true,
+                                            alarmId,
+                                            fireAlarm,
+                                          );
+                                        },
+                                        child: const Text("Set alarm"))
+                                  ],
+                                );
+                              });
+                        },
+                        child: const Icon(
+                          (Icons.looks_5),
+                          size: 60.0,
+                        ),
+                      ),
+                    ]),
+              ]),
+        ),
+        floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.add_alert),
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    actions: [
+                      TextField(
+                        controller: hourController,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(
+                            color: Colors.black, fontSize: 25.0),
+                      ),
+                      TextField(
+                        controller: minuteController,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(
+                            color: Colors.black, fontSize: 25.0),
+                      ),
+                      TextButton(
+                          onPressed: () async {
+                            int hour;
+                            int minute;
+                            hour = int.parse(hourController.text);
+                            minute = int.parse(minuteController.text);
+                            await service.showScheduledNotification(
+                              id: 2,
+                              title: 'Alarm',
+                              body: 'Time to wake up!',
+                              payload: 'Solve the puzzle to cancel the alarm',
+                              when: DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day,
+                                hour,
+                                minute,
+                              ),
+                            );
+                            final snackBar = SnackBar(
+                              content: Text('Alarm set for $hour $minute'),
+                              action: SnackBarAction(
+                                label: '',
+                                onPressed: () {},
+                              ),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          },
+                          child: const Text("Set alarm"))
+                    ],
+                  );
+                },
+              );
+            }));
   }
 
   void listenToNotification() =>
@@ -184,6 +261,61 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   static void fireAlarm() {
-    print('Alarm Fired at');
+    print('Alarm Fired at ${DateTime.now()}');
+    FlutterRingtonePlayer.play(
+      fromAsset: "sounds/pullup.mp3",
+      looping: true,
+      volume: 1,
+      asAlarm: false,
+    );
+  }
+
+  static void stopAlarm() {
+    // ignore: avoid_print
+    print('Alarm stopped');
+    FlutterRingtonePlayer.stop();
+  }
+}
+
+class ClockWidget extends StatefulWidget {
+  const ClockWidget({
+    Key? key,
+    //  required this.formattedTime,
+  }) : super(key: key);
+
+  // final String formattedTime;
+
+  @override
+  State<StatefulWidget> createState() {
+    return ClockWidgetState();
+  }
+}
+
+class ClockWidgetState extends State<ClockWidget> {
+  var formattedTime = DateFormat('HH:mm').format(DateTime.now());
+  @override
+  void initState() {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      var previousMinute =
+          DateTime.now().add(const Duration(seconds: -1)).minute;
+      var currentMinute = DateTime.now().minute;
+      if (previousMinute != currentMinute) {
+        setState(() {
+          formattedTime = DateFormat('HH:mm').format(DateTime.now());
+        });
+      }
+      super.initState();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      formattedTime,
+      style: const TextStyle(
+        fontFamily: 'Scp',
+        fontSize: 50.0,
+      ),
+    );
   }
 }
