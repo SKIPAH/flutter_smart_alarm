@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 // ignore: camel_case_types
-class alarms extends StatelessWidget {
-  const alarms({
+class puzzle extends StatelessWidget {
+  const puzzle({
     Key? key,
     required this.payload,
   }) : super(key: key);
 
   final String payload;
+
   @override
   Widget build(BuildContext context) {
     ThemeData.dark();
@@ -34,7 +36,7 @@ class alarms extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => alarms(
+                                builder: (context) => puzzle(
                                       payload: payload,
                                     )));
                       },
@@ -45,6 +47,16 @@ class alarms extends StatelessWidget {
                     ),
                     SimpleDialogOption(
                       onPressed: () {
+                        int alarmId = 1;
+                        AndroidAlarmManager.oneShot(
+                          alarmClock: true,
+                          allowWhileIdle: true,
+                          wakeup: true,
+                          exact: true,
+                          const Duration(seconds: 0),
+                          alarmId,
+                          stopAlarm,
+                        );
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -64,11 +76,10 @@ class alarms extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => alarms(
+                                builder: (context) => puzzle(
                                       payload: payload,
                                     )));
                       },
-                      padding: const EdgeInsets.all(0),
                       child: const Text(
                         '6',
                         style: TextStyle(fontSize: 20.0),
@@ -79,11 +90,10 @@ class alarms extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => alarms(
+                                builder: (context) => puzzle(
                                       payload: payload,
                                     )));
                       },
-                      padding: const EdgeInsets.all(50),
                       child: const Text(
                         '5',
                         style: TextStyle(fontSize: 20.0),

@@ -75,18 +75,14 @@ class setAlarm extends StatelessWidget {
                     minutes = int.parse(minuteController.text);
                     FlutterAlarmClock.createAlarm(hour, minutes);
 
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AboutDialog(
-                            children: [
-                              Center(
-                                child: Text('Alarm set for $hour $minutes',
-                                    style: const TextStyle(fontSize: 20)),
-                              )
-                            ],
-                          );
-                        });
+                    final snackBar = SnackBar(
+                      content: Text('Alarm set for $hour:$minutes'),
+                      action: SnackBarAction(
+                        label: '',
+                        onPressed: () {},
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   child: const Text(
                     "Create alarm",

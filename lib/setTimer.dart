@@ -48,18 +48,14 @@ class setTimer extends StatelessWidget {
                 int seconds;
                 seconds = int.parse(secondsController.text);
                 FlutterAlarmClock.createTimer(seconds);
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AboutDialog(
-                        children: [
-                          Center(
-                            child: Text('Timer set for $seconds seconds!',
-                                style: TextStyle(fontSize: 20)),
-                          )
-                        ],
-                      );
-                    });
+                final snackBar = SnackBar(
+                  content: Text('Timer set for $seconds'),
+                  action: SnackBarAction(
+                    label: '',
+                    onPressed: () {},
+                  ),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
             ),
           ),
