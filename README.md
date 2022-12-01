@@ -1,6 +1,6 @@
 # flutter_smart_alarm
 
-My first proper Flutter project. School summer project
+My first proper Flutter project. School summer project (UNFINISHED)
 
 Smart alarm. Alarm clock for mobile that requires puzzles to stop the alarm.
 
